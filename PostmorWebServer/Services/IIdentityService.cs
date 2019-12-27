@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PostmorWebServer.Services
 {
-    interface IIdentityService
+    public interface IIdentityService
     {
-        Task<AuthenticationResult> RegisterAsyc(string Email, string Password);
+        Task<AuthenticationResult> RegisterAsyc(string Email, string Password, string Name, string Adress, string Picture);
         Task<AuthenticationResult> LoginAsyc(string Email, string Password);
         Task<AuthenticationResult> RefreshTokenAsyc(string token, string refreshToken);
     }
