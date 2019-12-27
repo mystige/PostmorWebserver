@@ -9,7 +9,7 @@ using PostmorWebServer;
 
 namespace PostmorWebServer.Migrations
 {
-    [DbContext(typeof(DbContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20191216163318_setup")]
     partial class setup
     {

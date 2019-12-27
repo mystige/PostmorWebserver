@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PostmorWebServer
 {
-    public class DbContext : IdentityDbContext<User, IdentityRole<int>,int>
+    public class DataContext : IdentityDbContext<User, IdentityRole<int>,int>
     {
         public DbSet<Letter> Letters { get; set; }
-        public DbContext(DbContextOptions<DbContext> options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
         }
