@@ -6,13 +6,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+    <Compile Remove="Migrations\20191216163318_setup.cs" />
+    <Compile Remove="Migrations\20191216163318_setup.Designer.cs" />
+    <Compile Remove="Migrations\20191217134041_setup2.cs" />
+    <Compile Remove="Migrations\20191217134041_setup2.Designer.cs" />
+    <Compile Remove="Migrations\20191227133154_setup.cs" />
+    <Compile Remove="Migrations\20191227133154_setup.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
   </ItemGroup>
 
 </Project>
