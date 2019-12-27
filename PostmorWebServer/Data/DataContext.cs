@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using PostmorWebServer.Data.Entities;
 
 namespace PostmorWebServer
 {
     public class DataContext : IdentityDbContext<User, IdentityRole<int>,int>
     {
         public DbSet<Letter> Letters { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 
