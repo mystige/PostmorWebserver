@@ -17,12 +17,12 @@ namespace PostmorWebServer.Services
 {
     public class IdentityService : IIdentityService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _dataContext;
 
-        public IdentityService(DataContext dataContext, UserManager<IdentityUser> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters)
+        public IdentityService(DataContext dataContext, UserManager<User> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters)
         {
             _dataContext = dataContext;
             _userManager = userManager;
@@ -123,7 +123,7 @@ namespace PostmorWebServer.Services
                     StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<AuthenticationResult> RegisterAsyc(string email, string password)
+        public async Task<AuthenticationResult> RegisterAsyc(string email, string password, string name, string adress, string picture)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
@@ -134,10 +134,17 @@ namespace PostmorWebServer.Services
                 };
             }
 
-            var newUser = new IdentityUser
+            var newUser = new User
             {
                 Email = email,
-                UserName = email
+                UserName = name,
+                Adress = adress,
+                ProfilePic = picture,
+                PrivateKey = "hej",
+                PublicKey = "hej",
+                ActiveUser = true,
+                PickupTime = DateTime.Parse("09:00"),
+                SendTime = DateTime.Parse("17:00")
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)
@@ -151,7 +158,7 @@ namespace PostmorWebServer.Services
 
         }
 
-        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(IdentityUser user)
+        private async Task<AuthenticationResult> GenerateAuthenticationResultForUserAsync(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
@@ -159,10 +166,10 @@ namespace PostmorWebServer.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("id", user.Id)
+                    new Claim(JwtRegisteredClaimNames.UniqueName, user.Adress)                 
 
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
