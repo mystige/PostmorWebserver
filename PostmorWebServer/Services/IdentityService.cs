@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PostmorWebServer.Data;
 using PostmorWebServer.Domain;
-using PostmorWebServer.Options;
+using PostmorWebServer.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PostmorWebServer.Options;
 
 namespace PostmorWebServer.Services
 {
