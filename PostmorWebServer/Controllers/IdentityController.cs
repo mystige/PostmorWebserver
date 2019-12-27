@@ -28,7 +28,7 @@ namespace PostmorWebServer.Controllers
                 });
 
             }
-            var authRespons = await _identityService.RegisterAsyc(request.Email, request.Password);
+            var authRespons = await _identityService.RegisterAsyc(request.Email, request.Password, request.Name, request.Adress, request.Picture);
             if (!authRespons.Succes)
             {
                 return BadRequest(new AuthFailedResponse
@@ -48,6 +48,13 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.Login)]
         public async Task<IActionResult> Login([FromBody]UserRegistrationRequest request)
         {
+            if (request == null)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = new string[] {"Http request is empty"}
+                });
+            }
             var authRespons = await _identityService.LoginAsyc(request.Email, request.Password);
             if (!authRespons.Succes)
             {
