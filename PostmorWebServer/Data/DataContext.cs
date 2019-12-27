@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PostmorWebServer.Data.Entities;
 
-namespace PostmorWebServer
+namespace PostmorWebServer.Data
 {
     public class DataContext : IdentityDbContext<User, IdentityRole<int>,int>
     {
-        public DbSet<Letter> Letters { get; set; }
+        //public DbSet<Letter> Letters { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
