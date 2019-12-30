@@ -12,6 +12,7 @@ namespace PostmorWebServer.Data.Entities
         [Required]
         public DateTime ReceivedTime { get; set; }
         [Required]
+        public string Type { get; set; }
         public string Message { get; set; }
         [Required]
         public User Sender { get; set; }

@@ -125,7 +125,16 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
         public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
         {
-            return default;
+            return Ok(new GenerateAdressesResponse
+            {
+                Adresses = new[] {"Katpissgatan 32",
+                    "Casperärmogen gatan 69",
+                    "Alkisgatan 12",
+                    "Detärkalltisibiren 32",
+                    "Gruvgrävarvägen 14",
+                    "EyNick gränden 2"
+                }
+            });
         }
 
 
