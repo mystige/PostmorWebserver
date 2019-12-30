@@ -121,6 +121,14 @@ namespace PostmorWebServer.Controllers
                 RefreshToken = authRespons.RefreshToken
             });
         }
+
+        [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
+        public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
+        {
+            return default;
+        }
+
+
     }
 
 }
