@@ -28,6 +28,15 @@ namespace PostmorWebServer.Controllers
                 });
 
             }
+            if (request.Email == null || request.Adress == null || request.Password == null || request.Name == null)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = new string[] {"Null value detected"}
+                });
+
+            }
+
             var authRespons = await _identityService.RegisterAsyc(request.Email, request.Password, request.Name, request.Adress, request.Picture);
             if (!authRespons.Succes)
             {
@@ -46,7 +55,7 @@ namespace PostmorWebServer.Controllers
 
 
         [HttpPost(ApiRoutes.Identity.Login)]
-        public async Task<IActionResult> Login([FromBody]UserRegistrationRequest request)
+        public async Task<IActionResult> Login([FromBody]UserLoginRequest request)
         {
             if (request == null)
             {
@@ -55,6 +64,14 @@ namespace PostmorWebServer.Controllers
                     Errors = new string[] {"Http request is empty"}
                 });
             }
+            if (request.Email == null || request.Password == null)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Errors = new string[] { "Http request has bad formating/missing information" }
+                });
+            }
+            
             var authRespons = await _identityService.LoginAsyc(request.Email, request.Password);
             if (!authRespons.Succes)
             {
