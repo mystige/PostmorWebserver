@@ -17,6 +17,6 @@ namespace PostmorWebServer.Data.Entities
         [Required]
         public User Sender { get; set; }
         [Required]
-        public User Retriver { get; set; }
+        public User Retriever { get; set; }
     }
 }
