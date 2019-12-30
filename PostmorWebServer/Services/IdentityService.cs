@@ -139,7 +139,7 @@ namespace PostmorWebServer.Services
                 UserName = email,
                 Email = email,
                 Name = name,
-                Adress = adress,
+                Address = adress,
                 ProfilePic = picture,
                 PrivateKey = "hej",
                 PublicKey = "hej",

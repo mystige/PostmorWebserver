@@ -163,7 +163,7 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("ActiveUser");
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired();
 
                     b.Property<string>("ConcurrencyStamp")
@@ -216,7 +216,7 @@ namespace PostmorWebServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Adress")
+                    b.HasIndex("Address")
                         .IsUnique();
 
                     b.HasIndex("NormalizedEmail")

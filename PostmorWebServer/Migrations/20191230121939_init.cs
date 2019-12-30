@@ -44,7 +44,7 @@ namespace PostmorWebServer.Migrations
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: false),
-                    Adress = table.Column<string>(nullable: false),
+                    Address = table.Column<string>(nullable: false),
                     PrivateKey = table.Column<string>(nullable: false),
                     PublicKey = table.Column<string>(nullable: false),
                     PickupTime = table.Column<string>(nullable: false),
@@ -208,9 +208,9 @@ namespace PostmorWebServer.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_Adress",
+                name: "IX_AspNetUsers_Address",
                 table: "AspNetUsers",
-                column: "Adress",
+                column: "Address",
                 unique: true);
 
             migrationBuilder.CreateIndex(

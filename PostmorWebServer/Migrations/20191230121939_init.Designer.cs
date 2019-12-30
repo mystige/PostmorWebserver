@@ -10,7 +10,7 @@ using PostmorWebServer.Data;
 namespace PostmorWebServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191230103702_init")]
+    [Migration("20191230121939_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,7 +165,7 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("ActiveUser");
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired();
 
                     b.Property<string>("ConcurrencyStamp")
@@ -218,7 +218,7 @@ namespace PostmorWebServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Adress")
+                    b.HasIndex("Address")
                         .IsUnique();
 
                     b.HasIndex("NormalizedEmail")

@@ -22,7 +22,7 @@ namespace PostmorWebServer.Data
         {             
             base.OnModelCreating(builder);
             builder.Entity<User>()
-                .HasIndex(u => u.Adress)
+                .HasIndex(u => u.Address)
                 .IsUnique();
         }
     }

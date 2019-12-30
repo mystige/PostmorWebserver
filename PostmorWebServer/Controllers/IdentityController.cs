@@ -62,7 +62,7 @@ namespace PostmorWebServer.Controllers
                 DeliveryTime = newuserResponse.DeliveryTime,
                 PickupTime = newuserResponse.PickupTime,
                 PrivateKey = newuserResponse.PrivateKey,
-                PubliciKey = newuserResponse.PubliciKey,
+                PublicKey = newuserResponse.PubliciKey,
                 Token = authRespons.Token,
                 RefreshToken = authRespons.RefreshToken
             });
