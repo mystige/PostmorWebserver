@@ -11,5 +11,6 @@ namespace PostmorWebServer.Domain
         public string RefreshToken { get; set; }
         public bool Succes { get; set; }
         public IEnumerable<string> Errors { get; set; }
+        public int UserID { get; set; }
     }
 }

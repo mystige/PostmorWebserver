@@ -22,7 +22,7 @@ namespace PostmorWebServer.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = ModelState.Values.SelectMany(x => x.Errors.Select(xx => xx.ErrorMessage))
                 });
@@ -30,24 +30,39 @@ namespace PostmorWebServer.Controllers
             }
             if (request.Email == null || request.Adress == null || request.Password == null || request.Name == null)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = new string[] {"Null value detected"}
                 });
 
             }
-
-            var authRespons = await _identityService.RegisterAsyc(request.Email, request.Password, request.Name, request.Adress, request.Picture);
+            
+            var authRespons = await _identityService.RegisterAsync(request.Email, request.Password, request.Name, request.Adress, request.Picture);
             if (!authRespons.Succes)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = authRespons.Errors
                 });
             }
 
-            return Ok(new AuthSuccessResponse
+            var newuserResponse =await _identityService.GenerateUserRegisterResponseAsync(authRespons.UserID);
+
+            if (!newuserResponse.Succes)
             {
+                return BadRequest(new FailedResponse
+                {
+                    Errors = newuserResponse.Error
+                });
+            }
+
+            return Ok(new RegisterSuccessRespones
+            {
+                Id = authRespons.UserID,
+                DeliveryTime = newuserResponse.DeliveryTime,
+                PickupTime = newuserResponse.PickupTime,
+                PrivateKey = newuserResponse.PrivateKey,
+                PubliciKey = newuserResponse.PubliciKey,
                 Token = authRespons.Token,
                 RefreshToken = authRespons.RefreshToken
             });
@@ -59,23 +74,23 @@ namespace PostmorWebServer.Controllers
         {
             if (request == null)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = new string[] {"Http request is empty"}
                 });
             }
             if (request.Email == null || request.Password == null)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = new string[] { "Http request has bad formating/missing information" }
                 });
             }
             
-            var authRespons = await _identityService.LoginAsyc(request.Email, request.Password);
+            var authRespons = await _identityService.LoginAsync(request.Email, request.Password);
             if (!authRespons.Succes)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = authRespons.Errors
                 });
@@ -91,10 +106,10 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.Refresh)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
         {
-            var authRespons = await _identityService.RefreshTokenAsyc(request.Token, request.RefreshToken);
+            var authRespons = await _identityService.RefreshTokenAsync(request.Token, request.RefreshToken);
             if (!authRespons.Succes)
             {
-                return BadRequest(new AuthFailedResponse
+                return BadRequest(new FailedResponse
                 {
                     Errors = authRespons.Errors
                 });

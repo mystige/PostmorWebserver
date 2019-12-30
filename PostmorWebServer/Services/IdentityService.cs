@@ -30,7 +30,7 @@ namespace PostmorWebServer.Services
             _tokenValidationParameters = tokenValidationParameters;
         }
 
-        public async Task<AuthenticationResult> LoginAsyc(string email, string password)
+        public async Task<AuthenticationResult> LoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -52,7 +52,7 @@ namespace PostmorWebServer.Services
             return await GenerateAuthenticationResultForUserAsync(user);
         }
 
-        public async Task<AuthenticationResult> RefreshTokenAsyc(string token, string refreshToken)
+        public async Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken)
         {
             var validatedToken = GetPrincipalFromToken(token);
             if (validatedToken == null)
@@ -123,7 +123,7 @@ namespace PostmorWebServer.Services
                     StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<AuthenticationResult> RegisterAsyc(string email, string password, string name, string adress, string picture)
+        public async Task<AuthenticationResult> RegisterAsync(string email, string password, string name, string adress, string picture)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
@@ -136,15 +136,16 @@ namespace PostmorWebServer.Services
 
             var newUser = new User
             {
+                UserName = email,
                 Email = email,
-                UserName = name,
+                Name = name,
                 Adress = adress,
                 ProfilePic = picture,
                 PrivateKey = "hej",
                 PublicKey = "hej",
                 ActiveUser = true,
-                PickupTime = DateTime.Parse("09:00"),
-                SendTime = DateTime.Parse("17:00")
+                PickupTime = "09:00",
+                SendTime = "17:00"
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)
@@ -190,9 +191,30 @@ namespace PostmorWebServer.Services
 
             return new AuthenticationResult
             {
+                UserID = user.Id,
                 Succes = true,
                 Token = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken.Token
+            };
+        }
+
+        public async Task<RegisterResult> GenerateUserRegisterResponseAsync(int Id)
+        {
+            var user = await _userManager.FindByIdAsync((Id.ToString()));
+            if (user == null)
+            {
+                return new RegisterResult
+                {
+                    Error = new[] { "Something went wrong while fetching user" }
+                };
+            }
+            return new RegisterResult
+            {
+                Succes = true,
+                PickupTime = user.PickupTime,
+                DeliveryTime = user.SendTime,
+                PrivateKey = user.PrivateKey,
+                PubliciKey = user.PublicKey
             };
         }
     }

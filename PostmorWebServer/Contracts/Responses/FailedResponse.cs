@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PostmorWebServer.Contracts.Responses
 {
-    public class AuthFailedResponse
+    public class FailedResponse
     {
         public IEnumerable<String> Errors { get; set; }
     }

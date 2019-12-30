@@ -12,10 +12,15 @@
     <Compile Remove="Migrations\20191217134041_setup2.Designer.cs" />
     <Compile Remove="Migrations\20191227133154_setup.cs" />
     <Compile Remove="Migrations\20191227133154_setup.Designer.cs" />
+    <Compile Remove="Migrations\20191227133244_setup.cs" />
+    <Compile Remove="Migrations\20191227133244_setup.Designer.cs" />
+    <Compile Remove="Migrations\20191230101908_setup.cs" />
+    <Compile Remove="Migrations\20191230101908_setup.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
   </ItemGroup>

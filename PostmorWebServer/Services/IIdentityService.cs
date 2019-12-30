@@ -8,8 +8,10 @@ namespace PostmorWebServer.Services
 {
     public interface IIdentityService
     {
-        Task<AuthenticationResult> RegisterAsyc(string Email, string Password, string Name, string Adress, string Picture);
-        Task<AuthenticationResult> LoginAsyc(string Email, string Password);
-        Task<AuthenticationResult> RefreshTokenAsyc(string token, string refreshToken);
+        Task<AuthenticationResult> RegisterAsync(string Email, string Password, string Name, string Adress, string Picture);
+        Task<AuthenticationResult> LoginAsync(string Email, string Password);
+        Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);
+        Task<RegisterResult> GenerateUserRegisterResponseAsync(int Id);
+
     }
 }

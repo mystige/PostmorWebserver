@@ -178,6 +178,9 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
+                    b.Property<string>("Name")
+                        .IsRequired();
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
 
@@ -190,7 +193,8 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<DateTime>("PickupTime");
+                    b.Property<string>("PickupTime")
+                        .IsRequired();
 
                     b.Property<string>("PrivateKey")
                         .IsRequired();
@@ -202,7 +206,8 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<string>("SecurityStamp");
 
-                    b.Property<DateTime>("SendTime");
+                    b.Property<string>("SendTime")
+                        .IsRequired();
 
                     b.Property<bool>("TwoFactorEnabled");
 

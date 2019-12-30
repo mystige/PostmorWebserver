@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PostmorWebServer.Migrations
 {
-    public partial class setup : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,11 +43,12 @@ namespace PostmorWebServer.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
                     Adress = table.Column<string>(nullable: false),
                     PrivateKey = table.Column<string>(nullable: false),
                     PublicKey = table.Column<string>(nullable: false),
-                    PickupTime = table.Column<DateTime>(nullable: false),
-                    SendTime = table.Column<DateTime>(nullable: false),
+                    PickupTime = table.Column<string>(nullable: false),
+                    SendTime = table.Column<string>(nullable: false),
                     ActiveUser = table.Column<bool>(nullable: false),
                     ProfilePic = table.Column<string>(nullable: true)
                 },

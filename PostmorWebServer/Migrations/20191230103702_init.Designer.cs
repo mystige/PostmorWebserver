@@ -10,8 +10,8 @@ using PostmorWebServer.Data;
 namespace PostmorWebServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191227133244_setup")]
-    partial class setup
+    [Migration("20191230103702_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,6 +180,9 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
+                    b.Property<string>("Name")
+                        .IsRequired();
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
 
@@ -192,7 +195,8 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<DateTime>("PickupTime");
+                    b.Property<string>("PickupTime")
+                        .IsRequired();
 
                     b.Property<string>("PrivateKey")
                         .IsRequired();
@@ -204,7 +208,8 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<string>("SecurityStamp");
 
-                    b.Property<DateTime>("SendTime");
+                    b.Property<string>("SendTime")
+                        .IsRequired();
 
                     b.Property<bool>("TwoFactorEnabled");
 
