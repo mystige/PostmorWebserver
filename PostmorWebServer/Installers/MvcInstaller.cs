@@ -22,6 +22,7 @@ namespace PostmorWebServer.Installers
             services.AddSingleton(jwtSettings);
 
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IContactService, ContactService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
