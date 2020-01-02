@@ -7,7 +7,6 @@ namespace PostmorWebServer.Contracts.Requests
 {
     public class ContactAddRequest
     {
-        public string Token { get; set; }
         public int ContactId { get; set; }
     }
 }

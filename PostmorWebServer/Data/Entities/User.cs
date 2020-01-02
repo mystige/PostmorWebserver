@@ -13,6 +13,8 @@ namespace PostmorWebServer.Data.Entities
         public string Name { get; set; }
         [Required]
         public string Address { get; set; }
+
+        public string Streetnumber { get; set; }
         [Required]
         public string PrivateKey { get; set; }
         [Required]
@@ -21,9 +23,10 @@ namespace PostmorWebServer.Data.Entities
         public string PickupTime { get; set; }
         [Required]
         public string SendTime { get; set; }
+        [Required]
         public bool ActiveUser { get; set; }
         public string ProfilePic { get; set; }
-        //public List<User> Contacts { get; set; }
+        public List<User> Contacts { get; set; }
        
     }
 }

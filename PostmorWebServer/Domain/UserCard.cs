@@ -14,6 +14,7 @@ namespace PostmorWebServer.Domain
         public string Picture { get; set; }
         public bool IsFriend { get; set; }
         public string PublicKey { get; set; }
+        public string ContactAddress { get; set; }
     }
 
 }

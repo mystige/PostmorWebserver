@@ -8,7 +8,7 @@ namespace PostmorWebServer.Contracts.Responses
     public class ContactGetResponse
     {
         public int ContactId { get; set; }
-        public string Name { get; set; }
+        public string ContactName { get; set; }
         public string Address { get; set; }
         public string Picture { get; set; }
         public bool IsFriend { get; set; }

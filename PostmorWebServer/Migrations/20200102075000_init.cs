@@ -45,16 +45,24 @@ namespace PostmorWebServer.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Address = table.Column<string>(nullable: false),
+                    Streetnumber = table.Column<string>(nullable: true),
                     PrivateKey = table.Column<string>(nullable: false),
                     PublicKey = table.Column<string>(nullable: false),
                     PickupTime = table.Column<string>(nullable: false),
                     SendTime = table.Column<string>(nullable: false),
                     ActiveUser = table.Column<bool>(nullable: false),
-                    ProfilePic = table.Column<string>(nullable: true)
+                    ProfilePic = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,6 +232,11 @@ namespace PostmorWebServer.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UserId",
+                table: "AspNetUsers",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

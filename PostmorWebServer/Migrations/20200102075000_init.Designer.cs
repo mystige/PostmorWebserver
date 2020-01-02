@@ -10,7 +10,7 @@ using PostmorWebServer.Data;
 namespace PostmorWebServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20191230121939_init")]
+    [Migration("20200102075000_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -211,7 +211,11 @@ namespace PostmorWebServer.Migrations
                     b.Property<string>("SendTime")
                         .IsRequired();
 
+                    b.Property<string>("Streetnumber");
+
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<int?>("UserId");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
@@ -228,6 +232,8 @@ namespace PostmorWebServer.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -275,6 +281,13 @@ namespace PostmorWebServer.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("PostmorWebServer.Data.Entities.User", b =>
+                {
+                    b.HasOne("PostmorWebServer.Data.Entities.User")
+                        .WithMany("Contacts")
+                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

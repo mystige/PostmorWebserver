@@ -134,6 +134,14 @@ namespace PostmorWebServer.Services
                 };
             }
 
+            var existingAdress = await _dataContext.Users.SingleOrDefaultAsync(x => x.Address == adress);
+            if (existingAdress != null)
+            {
+                return new AuthenticationResult
+                {
+                    Errors = new[] { "User with this adress already exists" }
+                };
+            }
             var newUser = new User
             {
                 UserName = email,

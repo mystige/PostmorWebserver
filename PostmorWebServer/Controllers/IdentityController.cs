@@ -28,7 +28,7 @@ namespace PostmorWebServer.Controllers
                 });
 
             }
-            if (request.Email == null || request.Adress == null || request.Password == null || request.Name == null)
+            if (request.Email == null || request.Address == null || request.Password == null || request.Name == null)
             {
                 return BadRequest(new FailedResponse
                 {
@@ -37,7 +37,7 @@ namespace PostmorWebServer.Controllers
 
             }
             
-            var authRespons = await _identityService.RegisterAsync(request.Email, request.Password, request.Name, request.Adress, request.Picture);
+            var authRespons = await _identityService.RegisterAsync(request.Email, request.Password, request.Name, request.Address, request.Picture);
             if (!authRespons.Succes)
             {
                 return BadRequest(new FailedResponse
@@ -125,7 +125,7 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
         public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
         {
-            return Ok(new GenerateAdressesResponse
+            /*return Ok(new GenerateAdressesResponse
             {
                 Adresses = new[] {"Katpissgatan 32",
                     "Casperärmogen gatan 69",
@@ -134,7 +134,8 @@ namespace PostmorWebServer.Controllers
                     "Gruvgrävarvägen 14",
                     "EyNick gränden 2"
                 }
-            });
+            });*/
+            return Ok(DateTime.UtcNow.ToString("dd/MM/yy HH:mm"));
         }
 
 

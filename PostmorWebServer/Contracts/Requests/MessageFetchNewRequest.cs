@@ -7,7 +7,6 @@ namespace PostmorWebServer.Contracts.Requests
 {
     public class MessageFetchNewRequest
     {
-        public string Token{ get; set; }
         public string LatestMessageId { get; set; }
     }
 }
