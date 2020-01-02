@@ -7,7 +7,7 @@ namespace PostmorWebServer.Domain
 {
     public class UserCard
     {
-        public bool Exists { get; set; }
+        public bool Success { get; set; }
         public string Error{ get; set; }
         public int ContactId { get; set; }
         public string ContactName { get; set; }
