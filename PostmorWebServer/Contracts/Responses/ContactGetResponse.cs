@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PostmorWebServer.Contracts.Responses
 {
-    public class ContactGet
+    public class ContactGetResponse
     {
         public int ContactId { get; set; }
         public string Name { get; set; }

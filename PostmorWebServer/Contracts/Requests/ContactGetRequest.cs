@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PostmorWebServer.Contracts.Requests
 {
-    public class ContactGet
+    public class ContactGetRequest
     {
     }
 }
