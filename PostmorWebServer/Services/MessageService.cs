@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PostmorWebServer.Data;
 using PostmorWebServer.Data.Entities;
 using PostmorWebServer.Models;
@@ -19,8 +20,22 @@ namespace PostmorWebServer.Services
         }
         public async Task<List<Message>> FetchNewAsync(string token, int lastMsgId)
         {
-            int requesterId = ExtractIdFromJwtToken(token);
-            throw new NotImplementedException();
+            int requesterID = ExtractIdFromJwtToken(token);
+            var letters = await _dbContext.Letters.Where(x => x.RetrieverId == requesterID && x.Id > lastMsgId).ToListAsync();
+            List<Message> messages = new List<Message>();
+            foreach (var letter in letters)
+            {
+                messages.Add(new Message 
+                {
+                    MessageId = letter.Id,
+                    SenderId = letter.SenderId,
+                    ReceiverID = letter.RetrieverId,
+                    Content = letter.Message,
+                    Type = letter.Type,
+                    DeliveryTime = letter.ReceivedTime              
+                });
+            }
+            return messages;
         }
 
         public async Task<int> SendAsync(string[] message, string type, string token, int reciverId)
