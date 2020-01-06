@@ -13,7 +13,7 @@ namespace PostmorWebServer.Contracts
             public const string Register = "/identity/register";
             public const string Refresh = "/identity/refresh";
             public const string GenerateAdresses = "/identity/generateaddresses";
-            //en FetchAllData
+            public const string FetchAllData = "/identity/fetchalldata";
         }
         public static class Contacts
         {

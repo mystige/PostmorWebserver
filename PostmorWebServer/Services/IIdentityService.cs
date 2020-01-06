@@ -12,6 +12,7 @@ namespace PostmorWebServer.Services
         Task<AuthenticationResult> LoginAsync(string Email, string Password);
         Task<AuthenticationResult> RefreshTokenAsync(string token, string refreshToken);
         Task<RegisterResult> GenerateUserRegisterResponseAsync(int Id);
+        Task<FetchAllResult> FetchAllAsync(string token);
 
     }
 }

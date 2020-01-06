@@ -18,6 +18,7 @@ namespace PostmorWebServer.Services
         {
             _dbContext = dbContext;
         }
+
         public async Task<List<Message>> FetchNewAsync(string token, int lastMsgId)
         {
             int requesterID = ExtractIdFromJwtToken(token);
@@ -52,9 +53,7 @@ namespace PostmorWebServer.Services
             };
             await _dbContext.Letters.AddAsync(newMsg);
             await _dbContext.SaveChangesAsync();
-            return newMsg.Id;
-
-          
+            return newMsg.Id;    
         }
 
         

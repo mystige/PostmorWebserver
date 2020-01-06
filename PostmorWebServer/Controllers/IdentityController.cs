@@ -7,14 +7,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace PostmorWebServer.Controllers
 {
     public class IdentityController : Controller
     {
         private readonly IIdentityService _identityService;
-        public IdentityController(IIdentityService identityService)
+        private readonly IContactService _contactService;
+        private readonly IMessageService _messageService;
+        public IdentityController(IIdentityService identityService, IContactService contactService, IMessageService messageService)
         {
+            _messageService = messageService;
+            _contactService = contactService;
             _identityService = identityService;
         }
         [HttpPost(ApiRoutes.Identity.Register)]
@@ -67,6 +73,7 @@ namespace PostmorWebServer.Controllers
                 RefreshToken = authRespons.RefreshToken
             });
         }
+
 
 
         [HttpPost(ApiRoutes.Identity.Login)]
@@ -137,7 +144,26 @@ namespace PostmorWebServer.Controllers
             });
         }
 
-
+        [HttpPost(ApiRoutes.Identity.FetchAllData)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]        
+        public async Task<IActionResult> FetchAllData([FromHeader] string authorization)
+        {
+            var token = authorization.Substring("Bearer ".Length).Trim();
+            var response = await _identityService.FetchAllAsync(token);
+            if (!response.Success )
+            {
+                return BadRequest(new FailedResponse
+                {
+                    Errors = new string[] { "Casper, jag har ingen anning vad som blev fel men det är nått som inte funkar :D" }
+                });
+            }
+            return Ok(new UserFetchAllDataResponse
+            {
+                Contacts = response.Contacts,
+                Messages = response.Messages,
+                Userdata = response.RequesterUserCard
+            });
+        }
     }
 
 }
