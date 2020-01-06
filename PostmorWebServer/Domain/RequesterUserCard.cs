@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace PostmorWebServer.Domain
+﻿namespace PostmorWebServer.Domain
 {
     public class RequesterUserCard
     {
-        public int RequesterId { get; set; }
-        public string RequesterName { get; set; }
-        public string RequesterAddress { get; set; }
-        public string RequesterPublicKey { get; set; }
-        public string RequesterPrivateKey { get; set; }
-        public string RequesterPickupTime { get; set; }
-        public string RequesterDeliveryTime { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PublicKey { get; set; }
+        public string PrivateKey { get; set; }
+        public string PickupTime { get; set; }
+        public string DeliveryTime { get; set; }
+        public string Picture { get; set; }
     }
 }

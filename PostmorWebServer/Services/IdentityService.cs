@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PostmorWebServer.Options;
 using PostmorWebServer.Models;
+using System.IO;
 
 namespace PostmorWebServer.Services
 {
@@ -144,8 +145,8 @@ namespace PostmorWebServer.Services
                 };
             }
             string[] splitaddress = address.Split(' ');
-            string adresspart="";
-            for (int i = 0; i < splitaddress.Length-1; i++)
+            string adresspart = "";
+            for (int i = 0; i < splitaddress.Length - 1; i++)
             {
                 adresspart = string.Concat(adresspart, splitaddress[i]);
             }
@@ -163,7 +164,7 @@ namespace PostmorWebServer.Services
                 ActiveUser = true,
                 PickupTime = "09:00",
                 SendTime = "17:00",
-                Streetnumber = splitaddress[splitaddress.Length -1],
+                Streetnumber = splitaddress[splitaddress.Length - 1],
                 Contacts = new List<User>()
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
@@ -189,7 +190,7 @@ namespace PostmorWebServer.Services
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim("id", user.Id.ToString(), "int")                 
+                    new Claim("id", user.Id.ToString(), "int")
 
                 }),
                 Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
@@ -245,8 +246,8 @@ namespace PostmorWebServer.Services
             int requesterID = ExtractIdFromJwtToken(token);
             var requester = await _dataContext.Users
                 .Include(x => x.Contacts)
-                .FirstOrDefaultAsync(x => x.Id == requesterID);               
-                
+                .FirstOrDefaultAsync(x => x.Id == requesterID);
+
             var entries = await _dataContext.Letters
                 .Include(x => x.Sender)
                 .Include(x => x.Retriver)
@@ -268,12 +269,12 @@ namespace PostmorWebServer.Services
                     {
                         ContactId = entry.SenderId,
                         ContactName = entry.Sender.Name,
-                        ContactAddress = entry.Sender.Address,
+                        ContactAddress = entry.Sender.Address + " " + entry.Sender.Streetnumber,
                         Picture = entry.Sender.ProfilePic,
                         PublicKey = entry.Sender.PublicKey,
                         IsFriend = requester.Contacts.Contains(entry.Sender),
                         Success = true
-                    }) ;
+                    });
                     IDs.Add(entry.SenderId);
                 }
                 if (entry.SenderId == requesterID && !IDs.Contains(entry.RetrieverId))
@@ -282,7 +283,7 @@ namespace PostmorWebServer.Services
                     {
                         ContactId = entry.RetrieverId,
                         ContactName = entry.Retriver.Name,
-                        ContactAddress = entry.Retriver.Address,
+                        ContactAddress = entry.Retriver.Address + " " + entry.Retriver.Streetnumber,
                         Picture = entry.Retriver.ProfilePic,
                         PublicKey = entry.Retriver.PublicKey,
                         IsFriend = requester.Contacts.Contains(entry.Retriver),
@@ -295,13 +296,15 @@ namespace PostmorWebServer.Services
             }
             var requesterCard = new RequesterUserCard
             {
-              RequesterId = requesterID,
-              RequesterName = requester.Name,
-              RequesterAddress = requester.Address,
-              RequesterPrivateKey = requester.PrivateKey,
-              RequesterPublicKey = requester.PublicKey,
-              RequesterPickupTime = requester.PickupTime,
-              RequesterDeliveryTime = requester.SendTime
+                Id = requesterID,
+                Name = requester.Name,
+                Address = requester.Address,
+                PrivateKey = requester.PrivateKey,
+                PublicKey = requester.PublicKey,
+                PickupTime = requester.PickupTime,
+                DeliveryTime = requester.SendTime,
+                Picture = requester.ProfilePic
+                
             };
             return (new FetchAllResult
             {
@@ -311,7 +314,7 @@ namespace PostmorWebServer.Services
                 Success = true
             }); ;
 
-        } 
+        }
         private int ExtractIdFromJwtToken(string token)
         {
             var handler = new JwtSecurityTokenHandler();
@@ -319,6 +322,67 @@ namespace PostmorWebServer.Services
             var tokenS = handler.ReadToken(token) as JwtSecurityToken;
             var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
             return Convert.ToInt32(id);
+        }
+
+
+        public async Task<List<string>> GenerateAddresses(int amount)
+        {
+            var words = new List<string>();
+            var usedAddresses = await _dataContext.Users.Select(x => x.Address).ToListAsync(); ;
+            string[] endings = { "Street", "Road", "Avenue", "Row", "Square" };
+
+            using (var reader = new StreamReader(@"most-common-nouns-english.csv"))
+            {
+                reader.ReadLine();
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    words.Add(line);
+                }
+            }
+
+            List<Tuple<int, int>> gennumb = new List<Tuple<int,int>>();
+            for (int i = 0; i < amount; i++)
+            {
+                gennumb.Add(NumberGen());
+            }
+            var FinalAddresses = new List<string>();
+            foreach (var pair in gennumb)
+            {
+                StringBuilder address = new StringBuilder();
+                address.Append(words[pair.Item1]);
+                address.Append(words[pair.Item2]);
+                while (usedAddresses.Contains(address.ToString()))
+                {
+                    address.Clear();
+                    var newNumber = NumberGen();
+                    address.Append(words[newNumber.Item1]);
+                    address.Append(words[newNumber.Item2]);
+                }
+                Random rnd = new Random();
+                int end = rnd.Next(0, 5);
+                address.Append(" ");
+                address.Append(endings[end]);
+                address.Append(" ");
+                address.Append(rnd.Next(10, 40));
+                FinalAddresses.Add(System.Globalization
+                    .CultureInfo.CurrentCulture.TextInfo
+                    .ToTitleCase(address.ToString().ToLower()));
+                
+            }
+            return FinalAddresses;
+       }
+        private Tuple<int,int> NumberGen()
+        {
+            Random rnd = new Random();
+            int x = rnd.Next(0,987);
+            int y = rnd.Next(0,987);
+            while (x == y)
+            {
+                x = rnd.Next(0, 987);
+                y = rnd.Next(0, 987);
+            }
+            return new Tuple<int, int>(x,y);
         }
     }
 }

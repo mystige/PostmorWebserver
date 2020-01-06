@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.IO;
 
 namespace PostmorWebServer.Controllers
 {
@@ -132,15 +133,11 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
         public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
         {
+            var result = await _identityService.GenerateAddresses(5);
             return Ok(new GenerateAddressesResponse
             {
-                Addresses = new[] {"Katpissgatan 32",
-                    "Casperärmogen gatan 69",
-                    "Alkisgatan 12",
-                    "Detärkalltisibiren 32",
-                    "Gruvgrävarvägen 14",
-                    "EyNick gränden 2"
-                }
+                Addresses = result.ToArray()
+                
             });
         }
 
