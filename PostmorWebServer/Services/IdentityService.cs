@@ -162,8 +162,8 @@ namespace PostmorWebServer.Services
                 PrivateKey = "hej",
                 PublicKey = "hej",
                 ActiveUser = true,
-                PickupTime = "09:00",
-                SendTime = "17:00",
+                PickupTime = GenerateTimeString(true),
+                SendTime = GenerateTimeString(false),
                 Streetnumber = splitaddress[splitaddress.Length - 1],
                 Contacts = new List<User>()
             };
@@ -176,6 +176,20 @@ namespace PostmorWebServer.Services
                 };
             }
             return await GenerateAuthenticationResultForUserAsync(newUser);
+
+        }
+        private string GenerateTimeString(bool IsPickuptime)
+        {
+            Random rnd = new Random();
+            var temp = (DateTime.Now.Hour + rnd.Next(0, 23)) % 4;
+            if (IsPickuptime)
+            {
+                temp += 15;
+                return temp.ToString() + ":00";
+            }
+            temp += 9;
+            return temp.ToString() + ":00";
+            
 
         }
 
@@ -324,13 +338,15 @@ namespace PostmorWebServer.Services
             return Convert.ToInt32(id);
         }
 
-
+        //Generates addresses
         public async Task<List<string>> GenerateAddresses(int amount)
         {
             var words = new List<string>();
+            //Fetches all addresses in use
             var usedAddresses = await _dataContext.Users.Select(x => x.Address).ToListAsync(); ;
             string[] endings = { "Street", "Road", "Avenue", "Row", "Square" };
 
+            //reads word from file
             using (var reader = new StreamReader(@"most-common-nouns-english.csv"))
             {
                 reader.ReadLine();
