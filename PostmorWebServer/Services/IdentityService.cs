@@ -123,7 +123,7 @@ namespace PostmorWebServer.Services
                     StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public async Task<AuthenticationResult> RegisterAsync(string email, string password, string name, string adress, string picture)
+        public async Task<AuthenticationResult> RegisterAsync(string email, string password, string name, string address, string picture)
         {
             var existingUser = await _userManager.FindByEmailAsync(email);
             if (existingUser != null)
@@ -134,7 +134,7 @@ namespace PostmorWebServer.Services
                 };
             }
 
-            var existingAdress = await _dataContext.Users.SingleOrDefaultAsync(x => x.Address == adress);
+            var existingAdress = await _dataContext.Users.SingleOrDefaultAsync(x => x.Address == address);
             if (existingAdress != null)
             {
                 return new AuthenticationResult
@@ -142,18 +142,28 @@ namespace PostmorWebServer.Services
                     Errors = new[] { "User with this adress already exists" }
                 };
             }
+            string[] splitaddress = address.Split(' ');
+            string adresspart="";
+            for (int i = 0; i < splitaddress.Length-1; i++)
+            {
+                adresspart = string.Concat(adresspart, splitaddress[i]);
+            }
+
+
             var newUser = new User
             {
                 UserName = email,
                 Email = email,
                 Name = name,
-                Address = adress,
+                Address = adresspart,
                 ProfilePic = picture,
                 PrivateKey = "hej",
                 PublicKey = "hej",
                 ActiveUser = true,
                 PickupTime = "09:00",
-                SendTime = "17:00"
+                SendTime = "17:00",
+                Streetnumber = splitaddress[splitaddress.Length -1],
+                Contacts = new List<User>()
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)

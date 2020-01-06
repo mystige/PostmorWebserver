@@ -20,51 +20,68 @@ namespace PostmorWebServer.Services
             _dbContext = dbContext;
         }
 
-        public async Task<bool> AddAsync(string token, int ContactId)
+        public async Task<AddOrRemoveContactResult> AddAsync(string token, int ContactId)
         {
             int requesterId = ExtractIdFromJwtToken(token);
+            if (requesterId == ContactId)
+            {
+                return new AddOrRemoveContactResult
+                {
+                    Success = false,
+                    Error =  "Not possible to befriend yourself"
+                };
+            }
             var user = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
             var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
             if (user == null || contact == null)
             {
-                return false;
+                return new AddOrRemoveContactResult
+                {
+                    Success = false,
+                    Error = "User does not exist"
+                };
             }
             user.Contacts.Add(contact);
             var updated = await _dbContext.SaveChangesAsync();
-            return updated > 0 ? true : false;
+            return new AddOrRemoveContactResult { Success = true };
         }
 
-        public async Task<UserCard> FindUserByAddressAsync(string token, string ContactAddres)
-        {
-            int requesterId = ExtractIdFromJwtToken(token);
-            var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Address == ContactAddres);
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
-            return GenerateUserCard(user, contact);
-
-        }
-
-        public async Task<bool> RemoveAsync(string token, int ContactId)
+        public async Task<AddOrRemoveContactResult> RemoveAsync(string token, int ContactId)
         {
             int requesterId = ExtractIdFromJwtToken(token);
             var requester = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
             var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
-            
+
             if (requester.Contacts.Contains(contact))
             {
                 var result = requester.Contacts.Remove(contact);
-                return true;
+                return new AddOrRemoveContactResult { Success = true };
             }
-            return false;
+            return new AddOrRemoveContactResult { Error = "This user is not your contact" };
         }
+
+        public async Task<UserCard> FindUserByAddressAsync(string token, string ContactAddres)
+        {
+            int requesterId = ExtractIdFromJwtToken(token);
+            char[] Number = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ' ' };
+            string addres = ContactAddres.TrimEnd(Number);
+            var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Address == addres);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
+            return GenerateUserCard(user, contact);
+
+        }
+
 
         public async Task<UserCard> FindUserByIdAsync(string token, int ContactId)
         {
             int requesterId = ExtractIdFromJwtToken(token);
-            var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
+            var contact = await _dbContext.Users
+                .Include(u => u.Contacts)
+                .SingleOrDefaultAsync(x => x.Id == ContactId);
             var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
             return GenerateUserCard(user, contact);
         }
@@ -85,7 +102,7 @@ namespace PostmorWebServer.Services
                 return new UserCard
                 {
                     Success = false,
-                    Error = "User not found"
+                    Error = "You were not found?"
                 };
             }
 
@@ -94,7 +111,7 @@ namespace PostmorWebServer.Services
                 return new UserCard
                 {
                     Success = false,
-                    Error = "Contact not found"
+                    Error = "Address not found"
                 };
             }
             var userCard = new UserCard
@@ -103,7 +120,7 @@ namespace PostmorWebServer.Services
                 Picture = contact.ProfilePic,
                 Success = true,
                 PublicKey = contact.PublicKey,
-                ContactAddress = contact.Address,
+                ContactAddress = contact.Address + " " + contact.Streetnumber,
                 ContactName = contact.Name
             };
             if (requester.Id != contact.Id && requester.Contacts.Contains(contact))

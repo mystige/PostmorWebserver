@@ -17,7 +17,7 @@ namespace PostmorWebServer.Data.Entities
         public bool Used { get; set; }
         public bool Invaildated { get; set; }
         public int UserId { get; set; }
-        //[ForeignKey(nameof(UserId))]
-        //public User User { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public User User { get; set; }
     }
 }

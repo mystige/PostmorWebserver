@@ -7,6 +7,6 @@ namespace PostmorWebServer.Contracts.Requests
 {
     public class ContactSearchRequest
     {
-        public String Adress { get; set; }
+        public String Address { get; set; }
     }
 }

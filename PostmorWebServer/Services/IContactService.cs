@@ -9,8 +9,8 @@ namespace PostmorWebServer.Services
 {
     public interface IContactService
     {
-        Task<bool> AddAsync(string Token, int ContactId);
-        Task<bool> RemoveAsync(string Token, int ContactId);
+        Task<AddOrRemoveContactResult> AddAsync(string Token, int ContactId);
+        Task<AddOrRemoveContactResult> RemoveAsync(string Token, int ContactId);
         Task<UserCard> FindUserByIdAsync(string Token, int ContactId);
         Task<UserCard> FindUserByAddressAsync(string Token, string ContactAddres);
     }

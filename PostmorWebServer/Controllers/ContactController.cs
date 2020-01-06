@@ -39,9 +39,9 @@ namespace PostmorWebServer.Controllers
                 });
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
-            var IsSuccssesfull = await _contactService.AddAsync(token, request.ContactId);
+            var addResult = await _contactService.AddAsync(token, request.ContactId);
 
-            if (IsSuccssesfull)
+            if (addResult.Success)
             {
                 return Ok(new ContactAddResponse { Success = true });
             }
@@ -49,7 +49,7 @@ namespace PostmorWebServer.Controllers
             {
                 return BadRequest(new FailedResponse
                 {
-                    Errors = new string[] { "Error adding contact" }
+                    Errors = new string[] { addResult.Error }
                 });
             }
         }
@@ -57,7 +57,7 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Contacts.Get)]
         public async Task<IActionResult> Get([FromBody]ContactGetRequest request, [FromHeader] string authorization)
         {
-            if (request == null)
+            if (request == null )
             {
                 return BadRequest(new FailedResponse
                 {
@@ -65,11 +65,11 @@ namespace PostmorWebServer.Controllers
                 });
             }
 
-            if (!ModelState.IsValid)
+            if (request.ContactId == 0)
             {
                 return BadRequest(new FailedResponse
                 {
-                    Errors = new string[] { "Http request has faulty modelstate" }
+                    Errors = new string[] { "Http request is missing values or is badly formated" }
                 });
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
@@ -107,15 +107,15 @@ namespace PostmorWebServer.Controllers
                 });
             }
 
-            if (!ModelState.IsValid)
+            if (request.Address == null || request.Address == "")
             {
                 return BadRequest(new FailedResponse
                 {
-                    Errors = new string[] { "Http request has faulty modelstate" }
+                    Errors = new string[] { "Http request is missing values or is badly formated" }
                 });
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
-            var requestUserCard = await _contactService.FindUserByAddressAsync(token, request.Adress);
+            var requestUserCard = await _contactService.FindUserByAddressAsync(token, request.Address);
 
             if (!requestUserCard.Success)
             {
@@ -160,7 +160,10 @@ namespace PostmorWebServer.Controllers
                 });
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
-            return default;
+            var success = await _contactService.RemoveAsync(token, request.ContactId);
+            return Ok(new ContactRemoveResponse{
+                Success = true
+            });
         }
     }
 }

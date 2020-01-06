@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace PostmorWebServer.Contracts.Responses
 {
-    public class GenerateAdressesResponse
+    public class GenerateAddressesResponse
     {
-        public string[] Adresses { get; set; }
+        public string[] Addresses { get; set; }
     }
 }

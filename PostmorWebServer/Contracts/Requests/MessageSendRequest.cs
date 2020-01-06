@@ -7,6 +7,7 @@ namespace PostmorWebServer.Contracts.Requests
 {
     public class MessageSendRequest
     {
+        public int ContactId { get; set; }
         public string[] Message { get; set; }
         public string Type { get; set; }
     }

@@ -23,6 +23,7 @@ namespace PostmorWebServer.Installers
 
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IContactService, ContactService>();
+            services.AddScoped<IMessageService, MessageService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
