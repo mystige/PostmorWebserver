@@ -77,20 +77,33 @@ namespace PostmorWebServer.Services
             int requesterId = ExtractIdFromJwtToken(token);
             char[] Number = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ' ' };
             string addres = ContactAddres.TrimEnd(Number);
-            var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Address == addres);
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
-            return GenerateUserCard(user, contact);
+            var contact = await _dbContext.Users
+                .SingleOrDefaultAsync(x => x.Address == addres);
+            var user = await _dbContext.Users
+                .Include(u => u.Contacts)
+                .SingleOrDefaultAsync(x => x.Id == requesterId);
 
+            if (contact.ActiveUser)
+            {
+                return GenerateUserCard(user, contact);
+            }
+            return new UserCard { Error = "This user is inactive"};
         }
 
         public async Task<UserCard> FindUserByIdAsync(string token, int ContactId)
         {
             int requesterId = ExtractIdFromJwtToken(token);
-            var contact = await _dbContext.Users
-                .Include(u => u.Contacts)
+            var contact = await _dbContext.Users                
                 .SingleOrDefaultAsync(x => x.Id == ContactId);
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
-            return GenerateUserCard(user, contact);
+            var user = await _dbContext.Users
+                .Include(u => u.Contacts)
+                .SingleOrDefaultAsync(x => x.Id == requesterId);
+
+            if (contact.ActiveUser)
+            {
+                return GenerateUserCard(user, contact);
+            }
+            return new UserCard { Error = "This user is inactive" };
         }
         
         private int ExtractIdFromJwtToken(string token)

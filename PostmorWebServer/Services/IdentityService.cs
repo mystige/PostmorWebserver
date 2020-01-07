@@ -321,7 +321,10 @@ namespace PostmorWebServer.Services
                 PublicKey = requester.PublicKey,
                 PickupTime = requester.PickupTime,
                 DeliveryTime = requester.SendTime,
-                Picture = requester.ProfilePic
+                Picture = requester.ProfilePic,
+                Success = true
+                
+                
                 
             };
             return (new FetchAllResult

@@ -150,8 +150,8 @@ namespace PostmorWebServer.Controllers
             if (!response.Success )
             {
                 return BadRequest(new FailedResponse
-                {
-                    Errors = new string[] { "Casper, jag har ingen anning vad som blev fel men det är nått som inte funkar :D" }
+                {                  
+                    Errors = new string[] { "Casper, jag har ingen anning vad som blev fel men det är nått som inte funkar :D", response.Error }
                 });
             }
             return Ok(new UserFetchAllDataResponse
