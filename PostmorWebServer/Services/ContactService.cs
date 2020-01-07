@@ -51,6 +51,14 @@ namespace PostmorWebServer.Services
         public async Task<AddOrRemoveContactResult> RemoveAsync(string token, int ContactId)
         {
             int requesterId = ExtractIdFromJwtToken(token);
+            if (requesterId == ContactId)
+            {
+                return new AddOrRemoveContactResult
+                {
+                    Success = false,
+                    Error = "Not possible to befriend yourself"
+                };
+            }
             var requester = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
@@ -84,33 +92,7 @@ namespace PostmorWebServer.Services
             var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == requesterId);
             return GenerateUserCard(user, contact);
         }
-
-        public async Task<List<UserCard>> FetchAll(string token, List<int> Ids)
-        {
-            int requesterId = ExtractIdFromJwtToken(token);
-            Ids.Remove(requesterId);
-            var requester = await _dbContext.Users
-                .Include(u => u.Contacts)
-                .SingleOrDefaultAsync(x => x.Id == requesterId);
-            var users = await _dbContext.Users.Where(x => Ids.Contains(x.Id)).ToListAsync();
-                                               
-            List <UserCard> userCards = new List<UserCard>();
-            foreach (var user in users)
-            {
-                userCards.Add(new UserCard
-                {
-                    ContactId = user.Id,
-                    ContactName = user.Name,
-                    ContactAddress = user.Address,
-                    Picture = user.ProfilePic,
-                    PublicKey = user.PublicKey,
-                    Success = true,
-                    IsFriend = requester.Contacts.Contains(user),
-                });           
-            }
-            return userCards;
-        }
-
+        
         private int ExtractIdFromJwtToken(string token)
         {
             var handler = new JwtSecurityTokenHandler();
