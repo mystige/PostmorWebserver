@@ -37,4 +37,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\most-common-nouns-english.csv" />
+  </ItemGroup>
+
 </Project>

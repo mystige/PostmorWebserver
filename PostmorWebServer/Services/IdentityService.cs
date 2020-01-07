@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using PostmorWebServer.Options;
 using PostmorWebServer.Models;
 using System.IO;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PostmorWebServer.Services
 {
@@ -23,9 +25,11 @@ namespace PostmorWebServer.Services
         private readonly JwtSettings _jwtSettings;
         private readonly TokenValidationParameters _tokenValidationParameters;
         private readonly DataContext _dataContext;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public IdentityService(DataContext dataContext, UserManager<User> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters)
+        public IdentityService(DataContext dataContext, IHostingEnvironment environment, UserManager<User> userManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters)
         {
+            _hostingEnvironment = environment;
             _dataContext = dataContext;
             _userManager = userManager;
             _jwtSettings = jwtSettings;
@@ -345,9 +349,11 @@ namespace PostmorWebServer.Services
             //Fetches all addresses in use
             var usedAddresses = await _dataContext.Users.Select(x => x.Address).ToListAsync(); ;
             string[] endings = { "Street", "Road", "Avenue", "Row", "Square" };
+            
+            var path = Path.Combine(_hostingEnvironment.WebRootPath, "most-common-nouns-english.csv");
 
             //reads word from file
-            using (var reader = new StreamReader(@"most-common-nouns-english.csv"))
+            using (var reader = new StreamReader(path))
             {
                 reader.ReadLine();
                 while (!reader.EndOfStream)
