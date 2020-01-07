@@ -10,5 +10,6 @@
         public string PickupTime { get; set; }
         public string DeliveryTime { get; set; }
         public string Picture { get; set; }
+        public bool Success { get; set; }
     }
 }
