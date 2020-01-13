@@ -133,7 +133,13 @@ namespace PostmorWebServer.Controllers
         [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
         public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
         {
-            var result = await _identityService.GenerateAddresses(5);
+            int amount;
+            if (request.Amount == 0)
+            {
+                amount = 0;
+            }
+            amount = request.Amount;
+            var result = await _identityService.GenerateAddresses(amount);
             return Ok(new GenerateAddressesResponse
             {
                 Addresses = result.ToArray()

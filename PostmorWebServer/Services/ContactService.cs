@@ -79,6 +79,10 @@ namespace PostmorWebServer.Services
             string addres = ContactAddres.TrimEnd(Number);
             var contact = await _dbContext.Users
                 .SingleOrDefaultAsync(x => x.Address == addres);
+            if (contact == null)
+            {
+                return new UserCard { Error = "This user does not exist" };
+            }
             var user = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
