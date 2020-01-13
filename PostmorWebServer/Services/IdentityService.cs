@@ -150,10 +150,11 @@ namespace PostmorWebServer.Services
             }
             string[] splitaddress = address.Split(' ');
             string adresspart = "";
-            for (int i = 0; i < splitaddress.Length - 1; i++)
+            for (int i = 0; i < splitaddress.Length - 2; i++)
             {
                 adresspart = string.Concat(adresspart, splitaddress[i]);
             }
+            var streetnumber = string.Concat (splitaddress[splitaddress.Length - 2], " ", splitaddress[splitaddress.Length - 1]);
 
 
             var newUser = new User
@@ -168,7 +169,7 @@ namespace PostmorWebServer.Services
                 ActiveUser = true,
                 PickupTime = GenerateTimeString(true),
                 SendTime = GenerateTimeString(false),
-                Streetnumber = splitaddress[splitaddress.Length - 1],
+                Streetnumber = streetnumber,
                 Contacts = new List<User>()
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
@@ -312,6 +313,25 @@ namespace PostmorWebServer.Services
 
 
             }
+
+            foreach (var contact in requester.Contacts)
+            {
+                if (interlocutor.SingleOrDefault(x => x.ContactId == contact.Id) == null)
+                {
+                    interlocutor.Add(new UserCard
+                    {
+                        ContactId = contact.Id,
+                        ContactName = contact.Name,
+                        ContactAddress = contact.Address + " " + contact.Streetnumber,
+                        Picture = contact.ProfilePic,
+                        PublicKey = contact.PublicKey,
+                        IsFriend = true,
+                        Success = true
+                    });
+                }
+            }
+
+
             var requesterCard = new RequesterUserCard
             {
                 Id = requesterID,
