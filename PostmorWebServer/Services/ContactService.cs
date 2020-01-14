@@ -81,10 +81,9 @@ namespace PostmorWebServer.Services
         public async Task<UserCard> FindUserByAddressAsync(string token, string ContactAddres)
         {
             int requesterId = ExtractIdFromJwtToken(token);
-            char[] Number = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ' ' };
-            string addres = ContactAddres.TrimEnd(Number);
+            var address = ContactAddres.Split(' ');
             var contact = await _dbContext.Users
-                .SingleOrDefaultAsync(x => x.Address == addres);
+                .SingleOrDefaultAsync(x => x.Address == address[0]);
             if (contact == null)
             {
                 return new UserCard
