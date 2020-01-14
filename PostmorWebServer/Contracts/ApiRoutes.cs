@@ -14,6 +14,7 @@ namespace PostmorWebServer.Contracts
             public const string Refresh = "/identity/refresh";
             public const string GenerateAdresses = "/identity/generateaddresses";
             public const string FetchAllData = "/identity/fetchalldata";
+            public const string ChangePassword = "/identity/changepassword";
         }
         public static class Contacts
         {
