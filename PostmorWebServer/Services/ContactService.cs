@@ -63,13 +63,19 @@ namespace PostmorWebServer.Services
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
             var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
+            
+            if(contact == null)
+            {
+                return new AddOrRemoveContactResult { Error = "This user does not exist", Success = false };
+            }
 
             if (requester.Contacts.Contains(contact))
             {
                 var result = requester.Contacts.Remove(contact);
+                await _dbContext.SaveChangesAsync();
                 return new AddOrRemoveContactResult { Success = true };
             }
-            return new AddOrRemoveContactResult { Error = "This user is not your contact" };
+            return new AddOrRemoveContactResult { Error = "This user is not your contact", Success = false };
         }
 
         public async Task<UserCard> FindUserByAddressAsync(string token, string ContactAddres)
@@ -81,17 +87,32 @@ namespace PostmorWebServer.Services
                 .SingleOrDefaultAsync(x => x.Address == addres);
             if (contact == null)
             {
-                return new UserCard { Error = "This user does not exist" };
+                return new UserCard
+                {
+                    Error = "This user does not exist",
+                    Success = false
+                };
             }
             var user = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
-
+            if(user == null)
+            {
+                return new UserCard
+                {
+                    Error = "You does not exist?",
+                    Success = false
+                };
+            }
             if (contact.ActiveUser)
             {
                 return GenerateUserCard(user, contact);
             }
-            return new UserCard { Error = "This user is inactive"};
+            return new UserCard
+            {
+                Error = "This user is inactive",
+                Success = false
+            };
         }
 
         public async Task<UserCard> FindUserByIdAsync(string token, int ContactId)
@@ -157,6 +178,5 @@ namespace PostmorWebServer.Services
             }
             return userCard;
         }
-
     }
 }
