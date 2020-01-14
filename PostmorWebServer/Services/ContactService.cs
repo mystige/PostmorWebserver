@@ -31,12 +31,8 @@ namespace PostmorWebServer.Services
                     Error =  "Not possible to befriend yourself"
                 };
             }
-            var user = await _dbContext.Users
-                .Include(u => u.Contacts)
-                .SingleOrDefaultAsync(x => x.Id == requesterId);
             var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
-
-            if (user == null || contact == null)
+            if (contact == null)
             {
                 return new AddOrRemoveContactResult
                 {
@@ -44,7 +40,19 @@ namespace PostmorWebServer.Services
                     Error = "User does not exist"
                 };
             }
-            if (user.Contacts.Contains(contact))
+
+            var user = await _dbContext.Users
+                .Include(u => u.Contacts)
+                .SingleOrDefaultAsync(x => x.Id == requesterId);
+
+            if (user == null)
+                return new AddOrRemoveContactResult
+                {
+                    Success = false,
+                    Error = "You does not exist"
+                };
+
+            if (user.Contacts.Any(x=> x.User1Id == user.Id && x.User2Id == contact.Id))
             {
                 return new AddOrRemoveContactResult
                 {
@@ -52,9 +60,15 @@ namespace PostmorWebServer.Services
                     Error = "User already your friend"
                 };
             }
-            user.Contacts.Add(contact);
+            user.Contacts.Add(new UserContact { 
+                User1 = user,
+                User1Id = user.Id,
+                User2 = contact,
+                User2Id = contact.Id
+            });
             var updated = await _dbContext.SaveChangesAsync();
-            return new AddOrRemoveContactResult { Success = true };
+            
+            return new AddOrRemoveContactResult { Success = updated > 0 };
         }
 
         public async Task<AddOrRemoveContactResult> RemoveAsync(string token, int ContactId)
@@ -77,10 +91,10 @@ namespace PostmorWebServer.Services
             {
                 return new AddOrRemoveContactResult { Error = "This user does not exist", Success = false };
             }
-
-            if (requester.Contacts.Contains(contact))
+            var relation = requester.Contacts.Find(x => x.User1Id == requester.Id && x.User2Id == contact.Id);
+            if (relation!=null)
             {
-                var result = requester.Contacts.Remove(contact);
+                var result = requester.Contacts.Remove(relation);
                 await _dbContext.SaveChangesAsync();
                 return new AddOrRemoveContactResult { Success = true };
             }
@@ -140,15 +154,6 @@ namespace PostmorWebServer.Services
                 };
             }
 
-            if (user == null)
-            {
-                return new UserCard
-                {
-                    Error = "You does not exist?",
-                    Success = false
-                };
-            }
-
             if (contact.ActiveUser)
             {
                 return GenerateUserCard(user, contact);
@@ -193,7 +198,8 @@ namespace PostmorWebServer.Services
                 ContactAddress = contact.Address + " " + contact.Streetnumber,
                 ContactName = contact.Name
             };
-            if (requester.Id != contact.Id && requester.Contacts.Contains(contact))
+            var relation = requester.Contacts.Find(x => x.User1Id == requester.Id && x.User2Id == contact.Id);
+            if (relation != null && requester.Id != contact.Id) 
             {
                 userCard.IsFriend = true;
             }

@@ -22,12 +22,26 @@
     <Compile Remove="Migrations\20191230121939_init.Designer.cs" />
     <Compile Remove="Migrations\20191230140517_Init.cs" />
     <Compile Remove="Migrations\20191230140517_Init.Designer.cs" />
+    <Compile Remove="Migrations\20200102075000_init.cs" />
+    <Compile Remove="Migrations\20200102075000_init.Designer.cs" />
     <Compile Remove="Migrations\20200102113139_Letter.cs" />
     <Compile Remove="Migrations\20200102113139_Letter.Designer.cs" />
     <Compile Remove="Migrations\20200102124648_letter.cs" />
     <Compile Remove="Migrations\20200102124648_letter.Designer.cs" />
     <Compile Remove="Migrations\20200102125116_final.cs" />
     <Compile Remove="Migrations\20200102125116_final.Designer.cs" />
+    <Compile Remove="Migrations\20200102140658_final.cs" />
+    <Compile Remove="Migrations\20200102140658_final.Designer.cs" />
+    <Compile Remove="Migrations\20200114173001_fix.cs" />
+    <Compile Remove="Migrations\20200114173001_fix.Designer.cs" />
+    <Compile Remove="Migrations\20200114191739_final.cs" />
+    <Compile Remove="Migrations\20200114191739_final.Designer.cs" />
+    <Compile Remove="Migrations\20200114193617_final.cs" />
+    <Compile Remove="Migrations\20200114193617_final.Designer.cs" />
+    <Compile Remove="Migrations\20200114193824_final.cs" />
+    <Compile Remove="Migrations\20200114193824_final.Designer.cs" />
+    <Compile Remove="Migrations\20200114194643_final.cs" />
+    <Compile Remove="Migrations\20200114194643_final.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -31,7 +31,26 @@ namespace PostmorWebServer.Data
             builder.Entity<Letter>()
                 .Property(e => e.Message)
                 .HasConversion(converter);
+            builder.Entity<Letter>()
+                .HasOne(l => l.Sender)
+                .WithMany(x => x.Letters)
+                .OnDelete(DeleteBehavior.Restrict);
 
+
+            builder.Entity<UserContact>()
+              .HasKey(c => new { c.User1Id, c.User2Id });
+
+            builder.Entity<UserContact>()
+                .HasOne(pt => pt.User1 )
+                .WithMany()
+                .HasForeignKey(pt => pt.User1Id)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UserContact>()
+                .HasOne(pt => pt.User2)
+                .WithMany(p => p.ContactOf)
+                .HasForeignKey(pt => pt.User2Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

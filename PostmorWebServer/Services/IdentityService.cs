@@ -170,7 +170,7 @@ namespace PostmorWebServer.Services
                 PickupTime = GenerateTimeString(true),
                 SendTime = GenerateTimeString(false),
                 Streetnumber = streetnumber,
-                Contacts = new List<User>()
+                Contacts = new List<UserContact>()
             };
             var createdUser = await _userManager.CreateAsync(newUser, password);
             if (!createdUser.Succeeded)
@@ -280,11 +280,13 @@ namespace PostmorWebServer.Services
                     ReceiverId = entry.RetrieverId,
                     Content = entry.Message,
                     Type = entry.Type,
-                    DeliveryTime = entry.ReceivedTime.ToString("dd-MM-yyyy hh:mm"),
-                    Timestamp = entry.ReceivedTime.ToString("dd-MM-yyyy hh:mm")
+                    DeliveryTime = entry.ReceivedTime.ToString("dd-MM-yyyy HH:mm"),
+                    Timestamp = entry.ReceivedTime.ToString("dd-MM-yyyy HH:mm")
                 });
+           
                 if (entry.RetrieverId == requesterID && !IDs.Contains(entry.SenderId))
                 {
+                    var relation = requester.Contacts.Find(x => x.User1Id == entry.SenderId && x.User2Id == requesterID);
                     interlocutor.Add(new UserCard
                     {
                         ContactId = entry.SenderId,
@@ -292,21 +294,23 @@ namespace PostmorWebServer.Services
                         ContactAddress = entry.Sender.Address + " " + entry.Sender.Streetnumber,
                         Picture = entry.Sender.ProfilePic,
                         PublicKey = entry.Sender.PublicKey,
-                        IsFriend = requester.Contacts.Contains(entry.Sender),
+                        IsFriend = relation == null ? false:true,
                         Success = true
                     });
                     IDs.Add(entry.SenderId);
                 }
                 if (entry.SenderId == requesterID && !IDs.Contains(entry.RetrieverId))
                 {
+                    var relation = requester.Contacts.Find(x => x.User1Id == requesterID && x.User2Id == entry.RetrieverId);
                     interlocutor.Add(new UserCard
                     {
+
                         ContactId = entry.RetrieverId,
                         ContactName = entry.Retriver.Name,
                         ContactAddress = entry.Retriver.Address + " " + entry.Retriver.Streetnumber,
                         Picture = entry.Retriver.ProfilePic,
                         PublicKey = entry.Retriver.PublicKey,
-                        IsFriend = requester.Contacts.Contains(entry.Retriver),
+                        IsFriend = requester.Contacts.Contains(null),
                         Success = true
                     });
                     IDs.Add(entry.RetrieverId);
@@ -321,15 +325,15 @@ namespace PostmorWebServer.Services
                 {
                     interlocutor.Add(new UserCard
                     {
-                        ContactId = contact.Id,
-                        ContactName = contact.Name,
-                        ContactAddress = contact.Address + " " + contact.Streetnumber,
-                        Picture = contact.ProfilePic,
-                        PublicKey = contact.PublicKey,
+                       // ContactId = contact.Id,
+                        //ContactName = contact.Name,
+                        //ContactAddress = contact.Address + " " + contact.Streetnumber,
+                        //Picture = contact.ProfilePic,
+                        //PublicKey = contact.PublicKey,
                         IsFriend = true,
                         Success = true
                     });
-                    IDs.Add(contact.Id);
+                    //IDs.Add(contact.Id);
                 }
             }
 

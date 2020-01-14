@@ -10,7 +10,7 @@ using PostmorWebServer.Data;
 namespace PostmorWebServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20200102140658_final")]
+    [Migration("20200114195119_final")]
     partial class final
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,8 +243,6 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
-                    b.Property<int?>("UserId");
-
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
@@ -261,9 +259,24 @@ namespace PostmorWebServer.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("PostmorWebServer.Data.Entities.UserContact", b =>
+                {
+                    b.Property<int>("User1Id");
+
+                    b.Property<int>("User2Id");
+
+                    b.Property<int>("Id");
+
+                    b.HasKey("User1Id", "User2Id");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("User2Id");
+
+                    b.ToTable("UserContact");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -319,9 +332,9 @@ namespace PostmorWebServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("PostmorWebServer.Data.Entities.User", "Sender")
-                        .WithMany()
+                        .WithMany("Letters")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("PostmorWebServer.Data.Entities.RefreshToken", b =>
@@ -332,11 +345,22 @@ namespace PostmorWebServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("PostmorWebServer.Data.Entities.User", b =>
+            modelBuilder.Entity("PostmorWebServer.Data.Entities.UserContact", b =>
                 {
                     b.HasOne("PostmorWebServer.Data.Entities.User")
                         .WithMany("Contacts")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("PostmorWebServer.Data.Entities.User", "User1")
+                        .WithMany()
+                        .HasForeignKey("User1Id")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PostmorWebServer.Data.Entities.User", "User2")
+                        .WithMany("ContactOf")
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

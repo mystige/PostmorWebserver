@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PostmorWebServer.Migrations
 {
-    public partial class init : Migration
+    public partial class final : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,35 +51,11 @@ namespace PostmorWebServer.Migrations
                     PickupTime = table.Column<string>(nullable: false),
                     SendTime = table.Column<string>(nullable: false),
                     ActiveUser = table.Column<bool>(nullable: false),
-                    ProfilePic = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: true)
+                    ProfilePic = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RefreshTokens",
-                columns: table => new
-                {
-                    Token = table.Column<string>(nullable: false),
-                    JwtID = table.Column<string>(nullable: true),
-                    CreationDate = table.Column<DateTime>(nullable: false),
-                    Expirydate = table.Column<DateTime>(nullable: false),
-                    Used = table.Column<bool>(nullable: false),
-                    Invaildated = table.Column<bool>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Token);
                 });
 
             migrationBuilder.CreateTable(
@@ -188,6 +164,89 @@ namespace PostmorWebServer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Letters",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ReceivedTime = table.Column<DateTime>(nullable: false),
+                    Type = table.Column<string>(nullable: false),
+                    Message = table.Column<string>(nullable: true),
+                    SenderId = table.Column<int>(nullable: false),
+                    RetrieverId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Letters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Letters_AspNetUsers_RetrieverId",
+                        column: x => x.RetrieverId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Letters_AspNetUsers_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Token = table.Column<string>(nullable: false),
+                    JwtID = table.Column<string>(nullable: true),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    Expirydate = table.Column<DateTime>(nullable: false),
+                    Used = table.Column<bool>(nullable: false),
+                    Invaildated = table.Column<bool>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Token);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserContact",
+                columns: table => new
+                {
+                    User1Id = table.Column<int>(nullable: false),
+                    User2Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserContact", x => new { x.User1Id, x.User2Id });
+                    table.ForeignKey(
+                        name: "FK_UserContact_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserContact_AspNetUsers_User1Id",
+                        column: x => x.User1Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserContact_AspNetUsers_User2Id",
+                        column: x => x.User2Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -234,9 +293,29 @@ namespace PostmorWebServer.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_UserId",
-                table: "AspNetUsers",
+                name: "IX_Letters_RetrieverId",
+                table: "Letters",
+                column: "RetrieverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Letters_SenderId",
+                table: "Letters",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_UserId",
+                table: "RefreshTokens",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserContact_Id",
+                table: "UserContact",
+                column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserContact_User2Id",
+                table: "UserContact",
+                column: "User2Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -257,7 +336,13 @@ namespace PostmorWebServer.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Letters");
+
+            migrationBuilder.DropTable(
                 name: "RefreshTokens");
+
+            migrationBuilder.DropTable(
+                name: "UserContact");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

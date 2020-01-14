@@ -33,8 +33,8 @@ namespace PostmorWebServer.Services
                     ReceiverId = letter.RetrieverId,
                     Content = letter.Message,
                     Type = letter.Type,
-                    DeliveryTime = letter.ReceivedTime.ToString("dd-MM-yyyy hh:mm"),
-                    Timestamp = letter.ReceivedTime.ToString("dd-MM-yyyy hh:mm")
+                    DeliveryTime = letter.ReceivedTime.ToString("dd-MM-yyyy HH:mm"),
+                    Timestamp = letter.ReceivedTime.ToString("dd-MM-yyyy HH:mm")
                 });
             }
             return messages;
@@ -54,7 +54,7 @@ namespace PostmorWebServer.Services
             };
             await _dbContext.Letters.AddAsync(newMsg);
             await _dbContext.SaveChangesAsync();
-            return new Tuple<int, string>(newMsg.Id, newMsg.ReceivedTime.ToString("dd-MM-yyyy hh:mm"));    
+            return new Tuple<int, string>(newMsg.Id, newMsg.ReceivedTime.ToString("dd-MM-yyyy HH:mm"));    
         }
 
         
