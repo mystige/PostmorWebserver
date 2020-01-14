@@ -8,5 +8,6 @@ namespace PostmorWebServer.Contracts.Responses
     public class MessageSendResponse
     {
         public int MessageId { get; set; }
+        public string Timestamp { get; set; }
     }
 }
