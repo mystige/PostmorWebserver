@@ -9,7 +9,7 @@ namespace PostmorWebServer.Services
 {
     public interface IMessageService
     {
-        Task<int> SendAsync(string[] Message, string Type, string SenderToken, int ReciverId);
+        Task<Tuple<int,string>> SendAsync(string[] Message, string Type, string SenderToken, int ReciverId);
         Task<List<Message>> FetchNewAsync(string SenderToken, int LastMsgId);
     }
 }

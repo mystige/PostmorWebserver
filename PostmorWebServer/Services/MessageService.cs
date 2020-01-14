@@ -30,16 +30,17 @@ namespace PostmorWebServer.Services
                 {
                     MessageId = letter.Id,
                     SenderId = letter.SenderId,
-                    ReceiverID = letter.RetrieverId,
+                    ReceiverId = letter.RetrieverId,
                     Content = letter.Message,
                     Type = letter.Type,
-                    DeliveryTime = letter.ReceivedTime              
+                    DeliveryTime = letter.ReceivedTime.ToString("dd-MM-yyyy hh:mm"),
+                    Timestamp = letter.ReceivedTime.ToString("dd-MM-yyyy hh:mm")
                 });
             }
             return messages;
         }
-
-        public async Task<int> SendAsync(string[] message, string type, string token, int reciverId)
+        
+        public async Task<Tuple<int,string>> SendAsync(string[] message, string type, string token, int reciverId)
         {
             int senderId = ExtractIdFromJwtToken(token);
             var newMsg = new Letter {
@@ -48,12 +49,12 @@ namespace PostmorWebServer.Services
                 Retriver = await _dbContext.Users.FindAsync(reciverId),
                 SenderId = senderId,
                 Sender = await _dbContext.Users.FindAsync(senderId),
-                ReceivedTime = DateTime.UtcNow.AddHours(48),
+                ReceivedTime = DateTime.UtcNow,
                 Message = message                                 
             };
             await _dbContext.Letters.AddAsync(newMsg);
             await _dbContext.SaveChangesAsync();
-            return newMsg.Id;    
+            return new Tuple<int, string>(newMsg.Id, newMsg.ReceivedTime.ToString("dd-MM-yyyy hh:mm"));    
         }
 
         
