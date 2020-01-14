@@ -9,8 +9,9 @@ namespace PostmorWebServer.Models
     {
         public int MessageId { get; set; }
         public int SenderId { get; set; }
-        public int ReceiverID { get; set; }
-        public DateTime DeliveryTime { get; set; }
+        public int ReceiverId { get; set; }
+        public string Timestamp { get; set; }
+        public string DeliveryTime { get; set; }
         public string[] Content { get; set; }
         public string Type { get; set; }
     }

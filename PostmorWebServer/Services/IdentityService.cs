@@ -277,10 +277,11 @@ namespace PostmorWebServer.Services
                 {
                     MessageId = entry.Id,
                     SenderId = entry.SenderId,
-                    ReceiverID = entry.RetrieverId,
+                    ReceiverId = entry.RetrieverId,
                     Content = entry.Message,
                     Type = entry.Type,
-                    DeliveryTime = entry.ReceivedTime
+                    DeliveryTime = entry.ReceivedTime.ToString("dd-MM-yyyy hh:mm"),
+                    Timestamp = entry.ReceivedTime.ToString("dd-MM-yyyy hh:mm")
                 });
                 if (entry.RetrieverId == requesterID && !IDs.Contains(entry.SenderId))
                 {
@@ -308,7 +309,7 @@ namespace PostmorWebServer.Services
                         IsFriend = requester.Contacts.Contains(entry.Retriver),
                         Success = true
                     });
-                    IDs.Add(entry.SenderId);
+                    IDs.Add(entry.RetrieverId);
                 }
 
 
@@ -316,7 +317,7 @@ namespace PostmorWebServer.Services
 
             foreach (var contact in requester.Contacts)
             {
-                if (interlocutor.SingleOrDefault(x => x.ContactId == contact.Id) == null)
+                if (!IDs.Contains(contact.Id))
                 {
                     interlocutor.Add(new UserCard
                     {
@@ -328,6 +329,7 @@ namespace PostmorWebServer.Services
                         IsFriend = true,
                         Success = true
                     });
+                    IDs.Add(contact.Id);
                 }
             }
 

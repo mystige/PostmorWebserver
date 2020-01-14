@@ -48,15 +48,15 @@ namespace PostmorWebServer.Controllers
 
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
-            var MessageID = await _messageService.SendAsync(request.Message, request.Type, token, request.ContactId);
-            if (MessageID == 0)
+            var Message = await _messageService.SendAsync(request.Message, request.Type, token, request.ContactId);
+            if (Message.Item1 == 0)
             {
                 return BadRequest(new FailedResponse
                 {
                     Errors = new string[] { "Something went wrong" }
                 });
             }
-            return Ok(new MessageSendResponse { MessageId = MessageID });
+            return Ok(new MessageSendResponse { MessageId = Message.Item1, Timestamp = Message.Item2 });
 
         }
 
@@ -82,18 +82,22 @@ namespace PostmorWebServer.Controllers
             var token = authorization.Substring("Bearer ".Length).Trim();
             var unSendLetters = await _messageService.FetchNewAsync(token, request.LatestMessageId);
             var response = new MessageFetchNewResponse();
-            foreach (var Letter in unSendLetters)
+            if (unSendLetters!=null)
             {
-
-                response.Messages.Append(new Message 
+                foreach (var Letter in unSendLetters)
                 {
-                    MessageId = Letter.MessageId,
-                    SenderId = Letter.SenderId,
-                    DeliveryTime = Letter.DeliveryTime,
-                    Content = Letter.Content,
-                    Type = Letter.Type,
-                });
+                    response.Messages.Append(new Message
+                    {
+                        MessageId = Letter.MessageId,
+                        SenderId = Letter.SenderId,
+                        DeliveryTime = Letter.DeliveryTime,
+                        Content = Letter.Content,
+                        Type = Letter.Type,
+                        Timestamp = Letter.Timestamp
+                    });
+                }
             }
+            
             return Ok(response);
             }
         
