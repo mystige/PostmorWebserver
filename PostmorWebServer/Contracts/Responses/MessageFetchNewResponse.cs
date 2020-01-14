@@ -8,6 +8,6 @@ namespace PostmorWebServer.Contracts.Responses
 {
     public class MessageFetchNewResponse
     {
-        public Message[] Messages { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }

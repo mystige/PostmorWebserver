@@ -338,7 +338,7 @@ namespace PostmorWebServer.Services
             {
                 Id = requesterID,
                 Name = requester.Name,
-                Address = requester.Address,
+                Address = requester.Address + " " + requester.Streetnumber,
                 PrivateKey = requester.PrivateKey,
                 PublicKey = requester.PublicKey,
                 PickupTime = requester.PickupTime,

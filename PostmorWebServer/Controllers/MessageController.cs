@@ -82,11 +82,12 @@ namespace PostmorWebServer.Controllers
             var token = authorization.Substring("Bearer ".Length).Trim();
             var unSendLetters = await _messageService.FetchNewAsync(token, request.LatestMessageId);
             var response = new MessageFetchNewResponse();
+            response.Messages = new List<Message>();
             if (unSendLetters!=null)
             {
                 foreach (var Letter in unSendLetters)
                 {
-                    response.Messages.Append(new Message
+                    response.Messages.Add(new Message
                     {
                         MessageId = Letter.MessageId,
                         SenderId = Letter.SenderId,

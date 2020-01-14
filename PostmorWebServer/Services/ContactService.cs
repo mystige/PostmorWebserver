@@ -35,12 +35,21 @@ namespace PostmorWebServer.Services
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
             var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
+
             if (user == null || contact == null)
             {
                 return new AddOrRemoveContactResult
                 {
                     Success = false,
                     Error = "User does not exist"
+                };
+            }
+            if (user.Contacts.Contains(contact))
+            {
+                return new AddOrRemoveContactResult
+                {
+                    Success = false,
+                    Error = "User already your friend"
                 };
             }
             user.Contacts.Add(contact);
@@ -122,6 +131,23 @@ namespace PostmorWebServer.Services
             var user = await _dbContext.Users
                 .Include(u => u.Contacts)
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
+            if (contact == null)
+            {
+                return new UserCard
+                {
+                    Error = "This user does not exist",
+                    Success = false
+                };
+            }
+
+            if (user == null)
+            {
+                return new UserCard
+                {
+                    Error = "You does not exist?",
+                    Success = false
+                };
+            }
 
             if (contact.ActiveUser)
             {
