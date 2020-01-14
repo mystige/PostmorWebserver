@@ -160,7 +160,14 @@ namespace PostmorWebServer.Controllers
                 });
             }
             var token = authorization.Substring("Bearer ".Length).Trim();
-            var success = await _contactService.RemoveAsync(token, request.ContactId);
+            var result = await _contactService.RemoveAsync(token, request.ContactId);
+            if (!result.Success)
+            {
+                return BadRequest(new FailedResponse
+                {
+                    Errors = new string[] { result.Error }
+                });
+            }
             return Ok(new ContactRemoveResponse{
                 Success = true
             });
