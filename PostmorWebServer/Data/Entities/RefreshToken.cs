@@ -16,8 +16,8 @@ namespace PostmorWebServer.Data.Entities
         public DateTime Expirydate { get; set; }
         public bool Used { get; set; }
         public bool Invaildated { get; set; }
-        public int UserId { get; set; }
-        [ForeignKey(nameof(UserId))]
+        public int UseraId { get; set; }
+        [ForeignKey(nameof(UseraId))]
         public User User { get; set; }
     }
 }

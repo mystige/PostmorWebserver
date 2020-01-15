@@ -130,6 +130,39 @@ namespace PostmorWebServer.Controllers
             });
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost(ApiRoutes.Identity.ChangePassword)]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, [FromHeader] string authorization)
+        {
+            if (request == null)
+            {
+                return BadRequest(new FailedResponse
+                {
+                    Errors = new string[] { "Http request is empty" }
+                });
+            }
+            if (request.CurrentPassword == null || request.NewPassword == null)
+            {
+                return BadRequest(new FailedResponse
+                {
+                    Errors = new string[] { "Http request has bad formating/missing information" }
+                });
+            }
+            var token = authorization.Substring("Bearer ".Length).Trim();
+            var result = await _identityService.ChangePasswordAsync(token, request.CurrentPassword, request.NewPassword);
+            if (result)
+            {
+                return Ok (new ChangePasswordResponse { Success = true }); 
+            }
+            return BadRequest(new FailedResponse
+            {
+                Errors = new string[] { "No change" }
+
+            });
+
+        }
+
+
         [HttpPost(ApiRoutes.Identity.GenerateAdresses)]
         public async Task<IActionResult> GenerateAdresses([FromBody] GenerateAdressesRequest request)
         {

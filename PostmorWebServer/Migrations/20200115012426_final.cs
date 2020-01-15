@@ -171,7 +171,7 @@ namespace PostmorWebServer.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ReceivedTime = table.Column<DateTime>(nullable: false),
-                    Type = table.Column<string>(nullable: false),
+                    Type = table.Column<string>(nullable: true),
                     Message = table.Column<string>(nullable: true),
                     SenderId = table.Column<int>(nullable: false),
                     RetrieverId = table.Column<int>(nullable: false)
@@ -184,13 +184,13 @@ namespace PostmorWebServer.Migrations
                         column: x => x.RetrieverId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Letters_AspNetUsers_SenderId",
                         column: x => x.SenderId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,14 +203,14 @@ namespace PostmorWebServer.Migrations
                     Expirydate = table.Column<DateTime>(nullable: false),
                     Used = table.Column<bool>(nullable: false),
                     Invaildated = table.Column<bool>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
+                    UseraId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RefreshTokens", x => x.Token);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_RefreshTokens_AspNetUsers_UseraId",
+                        column: x => x.UseraId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -220,25 +220,20 @@ namespace PostmorWebServer.Migrations
                 name: "UserContact",
                 columns: table => new
                 {
-                    User1Id = table.Column<int>(nullable: false),
-                    User2Id = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    User1Id = table.Column<int>(nullable: false),
+                    User2Id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserContact", x => new { x.User1Id, x.User2Id });
-                    table.ForeignKey(
-                        name: "FK_UserContact_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_UserContact", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserContact_AspNetUsers_User1Id",
                         column: x => x.User1Id,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserContact_AspNetUsers_User2Id",
                         column: x => x.User2Id,
@@ -303,14 +298,14 @@ namespace PostmorWebServer.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
+                name: "IX_RefreshTokens_UseraId",
                 table: "RefreshTokens",
-                column: "UserId");
+                column: "UseraId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserContact_Id",
+                name: "IX_UserContact_User1Id",
                 table: "UserContact",
-                column: "Id");
+                column: "User1Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserContact_User2Id",

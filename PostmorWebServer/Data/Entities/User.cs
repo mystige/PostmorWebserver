@@ -26,9 +26,8 @@ namespace PostmorWebServer.Data.Entities
         [Required]
         public bool ActiveUser { get; set; }
         public string ProfilePic { get; set; }
-        public List<UserContact> Contacts { get; set; }
-        public List<UserContact> ContactOf { get; set; }
         public List<Letter> Letters { get; set; }
+        public List<UserContact> Contacts { get; set; }
 
     }
 }

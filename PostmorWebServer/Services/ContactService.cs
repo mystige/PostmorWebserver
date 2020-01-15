@@ -31,7 +31,9 @@ namespace PostmorWebServer.Services
                     Error =  "Not possible to befriend yourself"
                 };
             }
-            var contact = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == ContactId);
+            var contact = await _dbContext.Users
+                .Where(u => u.Id == ContactId)
+                .SingleOrDefaultAsync();
             if (contact == null)
             {
                 return new AddOrRemoveContactResult
@@ -43,7 +45,8 @@ namespace PostmorWebServer.Services
 
             var user = await _dbContext.Users
                 .Include(u => u.Contacts)
-                .SingleOrDefaultAsync(x => x.Id == requesterId);
+                .Where(u => u.Id == requesterId)
+                .SingleOrDefaultAsync();
 
             if (user == null)
                 return new AddOrRemoveContactResult
@@ -60,12 +63,16 @@ namespace PostmorWebServer.Services
                     Error = "User already your friend"
                 };
             }
-            user.Contacts.Add(new UserContact { 
+            
+            var test = new UserContact
+            {
                 User1 = user,
-                User1Id = user.Id,
+                User1Id = 1,
                 User2 = contact,
-                User2Id = contact.Id
-            });
+                User2Id = ContactId
+            };
+            user.Contacts.Add(test);
+
             var updated = await _dbContext.SaveChangesAsync();
             
             return new AddOrRemoveContactResult { Success = updated > 0 };
@@ -116,7 +123,8 @@ namespace PostmorWebServer.Services
                 };
             }
             var user = await _dbContext.Users
-                .Include(u => u.Contacts)
+                .Include(x => x.Contacts)
+
                 .SingleOrDefaultAsync(x => x.Id == requesterId);
             if(user == null)
             {

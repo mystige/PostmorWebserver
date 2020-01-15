@@ -14,6 +14,7 @@ namespace PostmorWebServer.Services
         Task<RegisterResult> GenerateUserRegisterResponseAsync(int Id);
         Task<FetchAllResult> FetchAllAsync(string token);
         Task<List<string>> GenerateAddresses(int amount);
+        Task<bool> ChangePasswordAsync(string token, string password, string newPassword);
 
     }
 }

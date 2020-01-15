@@ -145,8 +145,7 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<int>("SenderId");
 
-                    b.Property<string>("Type")
-                        .IsRequired();
+                    b.Property<string>("Type");
 
                     b.HasKey("Id");
 
@@ -172,11 +171,11 @@ namespace PostmorWebServer.Migrations
 
                     b.Property<bool>("Used");
 
-                    b.Property<int>("UserId");
+                    b.Property<int>("UseraId");
 
                     b.HasKey("Token");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UseraId");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -262,15 +261,17 @@ namespace PostmorWebServer.Migrations
 
             modelBuilder.Entity("PostmorWebServer.Data.Entities.UserContact", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<int>("User1Id");
 
                     b.Property<int>("User2Id");
 
-                    b.Property<int>("Id");
+                    b.HasKey("Id");
 
-                    b.HasKey("User1Id", "User2Id");
-
-                    b.HasIndex("Id");
+                    b.HasIndex("User1Id");
 
                     b.HasIndex("User2Id");
 
@@ -325,38 +326,33 @@ namespace PostmorWebServer.Migrations
             modelBuilder.Entity("PostmorWebServer.Data.Entities.Letter", b =>
                 {
                     b.HasOne("PostmorWebServer.Data.Entities.User", "Retriver")
-                        .WithMany()
+                        .WithMany("Letters")
                         .HasForeignKey("RetrieverId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("PostmorWebServer.Data.Entities.User", "Sender")
-                        .WithMany("Letters")
+                        .WithMany()
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("PostmorWebServer.Data.Entities.RefreshToken", b =>
                 {
                     b.HasOne("PostmorWebServer.Data.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UseraId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("PostmorWebServer.Data.Entities.UserContact", b =>
                 {
-                    b.HasOne("PostmorWebServer.Data.Entities.User")
+                    b.HasOne("PostmorWebServer.Data.Entities.User", "User1")
                         .WithMany("Contacts")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("User1Id")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("PostmorWebServer.Data.Entities.User", "User1")
-                        .WithMany()
-                        .HasForeignKey("User1Id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("PostmorWebServer.Data.Entities.User", "User2")
-                        .WithMany("ContactOf")
+                        .WithMany()
                         .HasForeignKey("User2Id")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

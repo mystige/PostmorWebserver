@@ -220,7 +220,7 @@ namespace PostmorWebServer.Services
             var refreshToken = new RefreshToken
             {
                 JwtID = token.Id,
-                UserId = user.Id,
+                UseraId = user.Id,
                 CreationDate = DateTime.UtcNow,
                 Expirydate = DateTime.UtcNow.AddMonths(6)
             };
@@ -267,10 +267,13 @@ namespace PostmorWebServer.Services
                 .Include(x => x.Contacts)
                 .FirstOrDefaultAsync(x => x.Id == requesterID);
 
+
             var entries = await _dataContext.Letters
                 .Include(x => x.Sender)
                 .Include(x => x.Retriver)
                 .Where(x => x.RetrieverId == requesterID || x.SenderId == requesterID).ToListAsync();
+
+
             foreach (var entry in entries)
             {
                 messages.Add(new Message
@@ -286,7 +289,7 @@ namespace PostmorWebServer.Services
            
                 if (entry.RetrieverId == requesterID && !IDs.Contains(entry.SenderId))
                 {
-                    var relation = requester.Contacts.Find(x => x.User1Id == entry.SenderId && x.User2Id == requesterID);
+                    var relation = requester.Contacts.Find(x =>x.User2Id == entry.SenderId);
                     interlocutor.Add(new UserCard
                     {
                         ContactId = entry.SenderId,
@@ -301,19 +304,22 @@ namespace PostmorWebServer.Services
                 }
                 if (entry.SenderId == requesterID && !IDs.Contains(entry.RetrieverId))
                 {
-                    var relation = requester.Contacts.Find(x => x.User1Id == requesterID && x.User2Id == entry.RetrieverId);
+                    var retriver = await _dataContext.Users
+                            .Where(x => x.Id == entry.RetrieverId)
+                            .SingleOrDefaultAsync();
+                    var relation = requester.Contacts.Find(x=>x.User2Id == entry.RetrieverId);
                     interlocutor.Add(new UserCard
                     {
 
-                        ContactId = entry.RetrieverId,
-                        ContactName = entry.Retriver.Name,
-                        ContactAddress = entry.Retriver.Address + " " + entry.Retriver.Streetnumber,
-                        Picture = entry.Retriver.ProfilePic,
-                        PublicKey = entry.Retriver.PublicKey,
-                        IsFriend = requester.Contacts.Contains(null),
+                        ContactId = retriver.Id,
+                        ContactName = retriver.Name,
+                        ContactAddress = retriver.Address + " " + retriver.Streetnumber,
+                        Picture = retriver.ProfilePic,
+                        PublicKey = retriver.PublicKey,
+                        IsFriend = relation == null ? false : true,
                         Success = true
                     });
-                    IDs.Add(entry.RetrieverId);
+                    IDs.Add(retriver.Id);
                 }
 
 
@@ -321,19 +327,22 @@ namespace PostmorWebServer.Services
 
             foreach (var contact in requester.Contacts)
             {
-                if (!IDs.Contains(contact.Id))
+                if (!IDs.Contains(contact.User2Id))
                 {
+                    var contactUser = await _dataContext.Users
+                            .Where(x => x.Id == contact.User2Id)
+                            .SingleOrDefaultAsync();
                     interlocutor.Add(new UserCard
                     {
-                       // ContactId = contact.Id,
-                        //ContactName = contact.Name,
-                        //ContactAddress = contact.Address + " " + contact.Streetnumber,
-                        //Picture = contact.ProfilePic,
-                        //PublicKey = contact.PublicKey,
+                        ContactId = contactUser.Id,
+                        ContactName = contactUser.Name,
+                        ContactAddress = contactUser.Address + " " + contactUser.Streetnumber,
+                        Picture = contactUser.ProfilePic,
+                        PublicKey = contactUser.PublicKey,
                         IsFriend = true,
                         Success = true
-                    });
-                    //IDs.Add(contact.Id);
+                    }); 
+                    IDs.Add(contactUser.Id);
                 }
             }
 
@@ -370,6 +379,9 @@ namespace PostmorWebServer.Services
             var id = tokenS.Claims.First(claim => claim.Type == "id").Value;
             return Convert.ToInt32(id);
         }
+
+
+
 
         //Generates addresses
         public async Task<List<string>> GenerateAddresses(int amount)
@@ -434,6 +446,19 @@ namespace PostmorWebServer.Services
                 y = rnd.Next(0, 987);
             }
             return new Tuple<int, int>(x,y);
+        }
+
+        public async Task<bool> ChangePasswordAsync(string token, string password, string newPassword)
+        {
+            var requesterId = ExtractIdFromJwtToken(token);
+            var requester = await _dataContext.Users
+                .FirstOrDefaultAsync(x => x.Id == requesterId);
+            if (requester==null)
+            {
+                return false;
+            }
+            var result = await _userManager.ChangePasswordAsync(requester, password, newPassword);
+            return result.Succeeded;
         }
     }
 }

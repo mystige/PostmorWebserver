@@ -25,32 +25,35 @@ namespace PostmorWebServer.Data
                 v => string.Join(";", v),
                 v => v.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(val => val).ToArray());
             base.OnModelCreating(builder);
+
             builder.Entity<User>()
                 .HasIndex(u => u.Address)
                 .IsUnique();
             builder.Entity<Letter>()
                 .Property(e => e.Message)
                 .HasConversion(converter);
+
             builder.Entity<Letter>()
-                .HasOne(l => l.Sender)
-                .WithMany(x => x.Letters)
-                .OnDelete(DeleteBehavior.Restrict);
-
-
-            builder.Entity<UserContact>()
-              .HasKey(c => new { c.User1Id, c.User2Id });
-
-            builder.Entity<UserContact>()
-                .HasOne(pt => pt.User1 )
-                .WithMany()
-                .HasForeignKey(pt => pt.User1Id)
+                .HasOne(pt => pt.Retriver)
+                .WithMany(pt => pt.Letters)
+                .HasForeignKey(pt => pt.RetrieverId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<UserContact>()
                 .HasOne(pt => pt.User2)
-                .WithMany(p => p.ContactOf)
+                .WithMany()
                 .HasForeignKey(pt => pt.User2Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<UserContact>()
+                .HasOne(pt => pt.User1)
+                .WithMany(pt => pt.Contacts)
+                .HasForeignKey(pt => pt.User1Id);
+
+            
+
+
+
         }
     }
 
